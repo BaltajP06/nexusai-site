@@ -239,74 +239,106 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ── CONTACT FORM (Netlify) ──────────────────────────────────── */
+/* CONTACT FORM — Netlify */
 function setError(id, msg) {
   const el = document.getElementById(id);
   if (el) el.textContent = msg;
 }
+
 function clearErrors() {
-  ['nameErr','businessErr','emailErr','industryErr','formError'].forEach(id => setError(id, ''));
+  ['nameErr', 'businessErr', 'emailErr', 'industryErr', 'formError'].forEach(id => setError(id, ''));
 }
-function validateEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+
+function validateEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
 
 const form = document.getElementById('contactForm');
 const formSuccess = document.getElementById('formSuccess');
+const submitBtn = document.getElementById('submitBtn');
 
 if (form) {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     clearErrors();
 
-    const name     = form.querySelector('#name').value.trim();
-    const business = form.querySelector('#business').value.trim();
-    const email    = form.querySelector('#email').value.trim();
-    const industry = form.querySelector('#industry').value;
+    const name = document.getElementById('name')?.value.trim() || '';
+    const business = document.getElementById('business')?.value.trim() || '';
+    const email = document.getElementById('email')?.value.trim() || '';
+    const industry = document.getElementById('industry')?.value || '';
+    const phone = document.getElementById('phone')?.value.trim() || '';
+    const message = document.getElementById('message')?.value.trim() || '';
 
     let valid = true;
-    if (!name)                          { setError('nameErr',     'Please enter your name');              valid = false; }
-    if (!business)                      { setError('businessErr', 'Please enter your business name');     valid = false; }
-    if (!email || !validateEmail(email)){ setError('emailErr',    'Please enter a valid email address');  valid = false; }
-    if (!industry)                      { setError('industryErr', 'Please select your industry');         valid = false; }
+
+    if (!name) {
+      setError('nameErr', 'Please enter your name.');
+      valid = false;
+    }
+
+    if (!business) {
+      setError('businessErr', 'Please enter your business name.');
+      valid = false;
+    }
+
+    if (!email || !validateEmail(email)) {
+      setError('emailErr', 'Please enter a valid email address.');
+      valid = false;
+    }
+
+    if (!industry) {
+      setError('industryErr', 'Please select your industry.');
+      valid = false;
+    }
+
     if (!valid) return;
 
-    const btn = document.getElementById('submitBtn');
-    btn.textContent = 'Sending…';
-    btn.disabled = true;
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+    }
 
-    const formData = new FormData(form);
-
-    /* Netlify form submission */
     try {
-      const resp = await fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(Array.from(formData.entries())).toString()
-      });
-      /* Netlify returns 200/redirect on success */
-      form.style.display = 'none';
-      if (formSuccess) formSuccess.style.display = 'flex';
-      showToast('New booking incoming!', `${name} from ${business} just booked a free call.`);
-    } catch (err) {
-      /* Fallback: try /api/contact if server is configured */
-      try {
-        const r2 = await fetch('/api/contact', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(Object.fromEntries(formData.entries()))
-        });
-        if (r2.ok) {
-          form.style.display = 'none';
-          if (formSuccess) formSuccess.style.display = 'flex';
-          showToast('New booking incoming!', `${name} from ${business} just booked a free call.`);
-        } else {
-          setError('formError', 'Something went wrong. Please try again or email us directly.');
-          btn.textContent = 'Book My Free Audit Call →';
-          btn.disabled = false;
-        }
-      } catch (err2) {
-        setError('formError', 'Network error. Please try again later.');
-        btn.textContent = 'Book My Free Audit Call →';
-        btn.disabled = false;
+      const formData = new FormData(form);
+
+      if (!formData.get('form-name')) {
+        formData.append('form-name', 'contact');
       }
+
+      if (!formData.get('phone')) {
+        formData.set('phone', phone);
+      }
+
+      if (!formData.get('message')) {
+        formData.set('message', message);
+      }
+
+      const response = await fetch('/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams(formData).toString()
+      });
+
+      if (!response.ok) {
+        throw new Error('Form submission failed');
+      }
+
+      form.style.display = 'none';
+
+      if (formSuccess) {
+        formSuccess.style.display = 'flex';
+      }
+    } catch (error) {
+      setError('formError', 'Something went wrong. Please try again.');
+
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Book My Free Audit Call';
+      }
+
+      console.error(error);
     }
   });
 }
