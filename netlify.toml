@@ -1,0 +1,9 @@
+[build]
+  publish = "."
+
+# Proxy /api/* calls to your backend server (update YOUR_SERVER_URL after deploying server/)
+[[redirects]]
+  from   = "/api/*"
+  to     = "https://YOUR_SERVER_URL/:splat"
+  status = 200
+  force  = true

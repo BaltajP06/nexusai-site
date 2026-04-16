@@ -1,0 +1,11 @@
+# Secrets — NEVER commit these
+server/.env
+.env
+
+# Node
+server/node_modules/
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
