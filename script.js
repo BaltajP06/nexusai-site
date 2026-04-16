@@ -264,10 +264,8 @@ if (form) {
 
     const name = document.getElementById('name')?.value.trim() || '';
     const business = document.getElementById('business')?.value.trim() || '';
-    const email = document.getElementById('email')?.value.trim() || '';
+    const email = document.getElementById('email')?.value.trim().toLowerCase() || '';
     const industry = document.getElementById('industry')?.value || '';
-    const phone = document.getElementById('phone')?.value.trim() || '';
-    const message = document.getElementById('message')?.value.trim() || '';
 
     let valid = true;
 
@@ -293,52 +291,46 @@ if (form) {
 
     if (!valid) return;
 
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Sending...';
-    }
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Confirming...';
+
+    const payload = {
+      name,
+      business,
+      email,
+      phone: document.getElementById('phone')?.value.trim() || '',
+      industry,
+      message: document.getElementById('message')?.value.trim() || ''
+    };
 
     try {
-      const formData = new FormData(form);
-
-      if (!formData.get('form-name')) {
-        formData.append('form-name', 'contact');
-      }
-
-      if (!formData.get('phone')) {
-        formData.set('phone', phone);
-      }
-
-      if (!formData.get('message')) {
-        formData.set('message', message);
-      }
-
-      const response = await fetch('/', {
+      const resp = await fetch('/api/contact', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: new URLSearchParams(formData).toString()
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
 
-      if (!response.ok) {
-        throw new Error('Form submission failed');
+      const data = await resp.json();
+
+      if (!resp.ok) {
+        if (data?.error === 'duplicate_email') {
+          setError('emailErr', 'This email has already been used to request a call.');
+        } else {
+          setError('formError', 'Something went wrong. Please try again.');
+        }
+
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Book My Free Audit Call';
+        return;
       }
 
       form.style.display = 'none';
-
-      if (formSuccess) {
-        formSuccess.style.display = 'flex';
-      }
-    } catch (error) {
-      setError('formError', 'Something went wrong. Please try again.');
-
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Book My Free Audit Call';
-      }
-
-      console.error(error);
+      formSuccess.style.display = 'flex';
+    } catch (err) {
+      setError('formError', 'Network error. Please try again later.');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Book My Free Audit Call';
+      console.error(err);
     }
   });
 }

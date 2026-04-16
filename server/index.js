@@ -27,18 +27,53 @@ app.use(express.json({ limit: '10kb' }));
 const chatLimiter = rateLimit({ windowMs: 60_000, max: 30, standardHeaders: true, legacyHeaders: false });
 
 // ── /api/contact ────────────────────────────────────────────────
-app.post('/api/contact', async (req, res) => {
-  const { name, email, business, industry, phone, message } = req.body || {};
-  if (!name || !email || !business || !industry) {
-    return res.status(400).json({ error: 'Missing required fields' });
+import fs from 'fs';
+import path from 'path';
+
+const DATA_FILE = path.join(process.cwd(), 'submissions.json');
+
+function loadSubmissions() {
+  try {
+    if (!fs.existsSync(DATA_FILE)) return [];
+    return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+  } catch {
+    return [];
   }
-  // Log to console (replace with email provider / CRM webhook as needed)
-  console.log('📬 Contact form submission:', {
-    name, email, business, industry,
-    phone: phone || '—',
-    message: (message || '').slice(0, 300)
+}
+
+function saveSubmissions(data) {
+  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+}
+
+app.post('/api/contact', async (req, res) => {
+  const { name, business, email, phone, industry, message } = req.body || {};
+
+  if (!name || !business || !email || !industry) {
+    return res.status(400).json({ error: 'missing_fields' });
+  }
+
+  const normalizedEmail = String(email).trim().toLowerCase();
+  const submissions = loadSubmissions();
+
+  const alreadyUsed = submissions.some(entry => entry.email === normalizedEmail);
+
+  if (alreadyUsed) {
+    return res.status(409).json({ error: 'duplicate_email' });
+  }
+
+  submissions.push({
+    name,
+    business,
+    email: normalizedEmail,
+    phone: phone || '',
+    industry,
+    message: message || '',
+    createdAt: new Date().toISOString()
   });
-  return res.json({ ok: true });
+
+  saveSubmissions(submissions);
+
+  return res.json({ ok: true, status: 'confirmed' });
 });
 
 // ── /api/chat ───────────────────────────────────────────────────
