@@ -221,7 +221,41 @@ function validateEmail(email) {
    The backend checks for duplicate emails and returns JSON.
    On success, the form is hidden and the success message is shown.
    ========================================================================== */
-   let chatPending = false;
+const chatResponses = {
+  greeting: "Hey! 👋 Ask me about pricing, setup time, industries we work with, or what results clients see.",
+  pricing: "Three plans:\n• Starter — $147/mo + $297 setup\n• Growth — $397/mo + $797 setup (most popular)\n• Scale — $797/mo + $1,497 setup\n\nAnnual plans get 20% off + setup fee waived.",
+  setup: "Most automations go live in 3–5 business days. We handle everything technical.",
+  results: "Recent results:\n• Dental clinic: 47 bookings in month 1\n• Real estate team: response time cut from 3 min to 45 sec\n• Contractor: 12 admin hours saved weekly",
+  default: "Great question! Book a free 30-min audit call using the form below and we'll get specific to your business."
+};
+function getBotReply(msg) {
+  const m = msg.toLowerCase();
+  if (['hi', 'hello', 'hey'].some(w => m.includes(w))) return chatResponses.greeting;
+  if (['price', 'cost', 'how much', 'plan', 'fee'].some(w => m.includes(w))) return chatResponses.pricing;
+  if (['how long', 'setup', 'how fast', 'days'].some(w => m.includes(w))) return chatResponses.setup;
+  if (['results', 'proof', 'clients', 'roi'].some(w => m.includes(w))) return chatResponses.results;
+  return chatResponses.default;
+}
+function appendMessage(text, who) {
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-msg ' + (who === 'user' ? 'user' : 'bot');
+  wrap.textContent = text;
+  document.getElementById('chatMessages').appendChild(wrap);
+  wrap.scrollIntoView({ behavior: 'smooth', block: 'end' });
+}
+function showTyping() {
+  const t = document.createElement('div');
+  t.className = 'chat-typing'; t.id = 'typingIndicator';
+  t.innerHTML = '<span></span><span></span><span></span>';
+  document.getElementById('chatMessages').appendChild(t);
+  t.scrollIntoView({ behavior: 'smooth', block: 'end' });
+}
+function removeTyping() {
+  const t = document.getElementById('typingIndicator');
+  if (t) t.remove();
+}
+
+let chatPending = false;
 async function sendChat() {
   if (chatPending) return;
   const input = document.getElementById('chatInput');
@@ -299,22 +333,22 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     try {
-  const formData = new FormData(form);
-  const resp = await fetch('/', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams(Array.from(formData.entries())).toString()
-  });
+      const formData = new FormData(form);
+      const resp = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(Array.from(formData.entries())).toString()
+      });
 
-  form.style.display = 'none';
-  if (formSuccess) formSuccess.style.display = 'flex';
-  showToast('Booking confirmed! 🎉', name + ' from ' + business + ' — we\'ll be in touch within 4 hours.');
+      form.style.display = 'none';
+      if (formSuccess) formSuccess.style.display = 'flex';
+      showToast('Booking confirmed! 🎉', name + ' from ' + business + ' — we\'ll be in touch within 4 hours.');
 
-} catch (err) {
-  console.error('Form error:', err);
-  setError('formError', 'Network error. Please try again or email us directly.');
-  submitBtn.disabled    = false;
-  submitBtn.textContent = 'Book My Free Audit Call →';
-}
+    } catch (err) {
+      console.error('Form error:', err);
+      setError('formError', 'Network error. Please try again or email us directly.');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Book My Free Audit Call →';
+    }
   })
 })
