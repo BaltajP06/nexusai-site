@@ -1,20 +1,12 @@
 /* ==========================================================================
    NexusAI Frontend Script
-   --------------------------------------------------------------------------
-   This file handles:
-   1. Navbar state
-   2. Mobile menu
-   3. Scroll reveal animations
-   4. Animated counters
-   5. ROI calculator
-   6. Pricing toggle
-   7. Contact form submission
    ========================================================================== */
+
+console.log("NEW SCRIPT LOADED v4");
 
 /* ==========================================================================
    Navbar
    ========================================================================== */
-console.log("NEW SCRIPT LOADED v2");
 const nav = document.getElementById('nav');
 
 if (nav) {
@@ -30,7 +22,6 @@ if (nav) {
 /* ==========================================================================
    Mobile menu
    ========================================================================== */
-
 const menuBtn = document.getElementById('menuBtn');
 const mobileMenu = document.getElementById('mobileMenu');
 
@@ -51,7 +42,6 @@ if (menuBtn && mobileMenu) {
 /* ==========================================================================
    Scroll reveal
    ========================================================================== */
-
 const revealObs = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
@@ -69,7 +59,6 @@ document.querySelectorAll('.reveal').forEach((el) => revealObs.observe(el));
 /* ==========================================================================
    Animated counters
    ========================================================================== */
-
 function animateCounter(el) {
   const target = parseInt(el.dataset.count || '0', 10);
   const suffix = el.dataset.suffix || '';
@@ -106,7 +95,6 @@ document.querySelectorAll('[data-count]').forEach((el) => counterObs.observe(el)
 /* ==========================================================================
    ROI calculator
    ========================================================================== */
-
 function formatCurrency(n) {
   return '$' + Math.round(n).toLocaleString();
 }
@@ -159,7 +147,6 @@ calcROI();
 /* ==========================================================================
    Pricing toggle
    ========================================================================== */
-
 const prices = { starter: 147, growth: 397, scale: 797 };
 const setups = { starter: 297, growth: 797, scale: 1497 };
 const annualToggle = document.getElementById('annualToggle');
@@ -196,9 +183,92 @@ if (annualToggle) {
 }
 
 /* ==========================================================================
+   Chatbot helpers
+   ========================================================================== */
+const chatResponses = {
+  greeting: "Hey! 👋 Ask me about pricing, setup time, industries we work with, or what results clients see.",
+  pricing: "Three plans:\n• Starter — $147/mo + $297 setup\n• Growth — $397/mo + $797 setup (most popular)\n• Scale — $797/mo + $1,497 setup\n\nAnnual plans get 20% off + setup fee waived.",
+  setup: "Most automations go live in 3–5 business days. We handle everything technical.",
+  results: "Recent results:\n• Dental clinic: 47 bookings in month 1\n• Real estate team: response time cut from 3 min to 45 sec\n• Contractor: 12 admin hours saved weekly",
+  default: "Great question! Book a free 30-min audit call using the form below and we'll get specific to your business."
+};
+
+function getBotReply(msg) {
+  const m = msg.toLowerCase();
+
+  if (['hi', 'hello', 'hey'].some((w) => m.includes(w))) return chatResponses.greeting;
+  if (['price', 'cost', 'how much', 'plan', 'fee'].some((w) => m.includes(w))) return chatResponses.pricing;
+  if (['how long', 'setup', 'how fast', 'days'].some((w) => m.includes(w))) return chatResponses.setup;
+  if (['results', 'proof', 'clients', 'roi'].some((w) => m.includes(w))) return chatResponses.results;
+
+  return chatResponses.default;
+}
+
+function appendMessage(text, who) {
+  const messages = document.getElementById('chatMessages');
+  if (!messages) return;
+
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-msg ' + (who === 'user' ? 'user' : 'bot');
+  wrap.textContent = text;
+  messages.appendChild(wrap);
+  wrap.scrollIntoView({ behavior: 'smooth', block: 'end' });
+}
+
+function showTyping() {
+  const messages = document.getElementById('chatMessages');
+  if (!messages) return;
+
+  removeTyping();
+
+  const t = document.createElement('div');
+  t.className = 'chat-typing';
+  t.id = 'typingIndicator';
+  t.innerHTML = '<span></span><span></span><span></span>';
+  messages.appendChild(t);
+  t.scrollIntoView({ behavior: 'smooth', block: 'end' });
+}
+
+function removeTyping() {
+  const t = document.getElementById('typingIndicator');
+  if (t) t.remove();
+}
+
+let chatPending = false;
+
+async function sendChat() {
+  if (chatPending) return;
+
+  const input = document.getElementById('chatInput');
+  if (!input || !input.value.trim()) return;
+
+  const msg = input.value.trim();
+  appendMessage(msg, 'user');
+  input.value = '';
+  chatPending = true;
+
+  showTyping();
+  await new Promise((r) => setTimeout(r, 700 + Math.random() * 600));
+  removeTyping();
+
+  appendMessage(getBotReply(msg), 'bot');
+  chatPending = false;
+}
+
+function sendQuick(text) {
+  const input = document.getElementById('chatInput');
+  if (!input) return;
+
+  input.value = text;
+  sendChat();
+}
+
+window.sendQuick = sendQuick;
+window.sendChat = sendChat;
+
+/* ==========================================================================
    Contact form helpers
    ========================================================================== */
-
 function setError(id, message) {
   const el = document.getElementById(id);
   if (el) el.textContent = message;
@@ -214,69 +284,36 @@ function validateEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+function showToast(title, message) {
+  console.log(title, message);
+}
+
 /* ==========================================================================
-   Contact form submission
-   --------------------------------------------------------------------------
-   This sends the form to /api/contact.
-   The backend checks for duplicate emails and returns JSON.
-   On success, the form is hidden and the success message is shown.
+   DOM ready
    ========================================================================== */
-const chatResponses = {
-  greeting: "Hey! 👋 Ask me about pricing, setup time, industries we work with, or what results clients see.",
-  pricing: "Three plans:\n• Starter — $147/mo + $297 setup\n• Growth — $397/mo + $797 setup (most popular)\n• Scale — $797/mo + $1,497 setup\n\nAnnual plans get 20% off + setup fee waived.",
-  setup: "Most automations go live in 3–5 business days. We handle everything technical.",
-  results: "Recent results:\n• Dental clinic: 47 bookings in month 1\n• Real estate team: response time cut from 3 min to 45 sec\n• Contractor: 12 admin hours saved weekly",
-  default: "Great question! Book a free 30-min audit call using the form below and we'll get specific to your business."
-};
-function getBotReply(msg) {
-  const m = msg.toLowerCase();
-  if (['hi', 'hello', 'hey'].some(w => m.includes(w))) return chatResponses.greeting;
-  if (['price', 'cost', 'how much', 'plan', 'fee'].some(w => m.includes(w))) return chatResponses.pricing;
-  if (['how long', 'setup', 'how fast', 'days'].some(w => m.includes(w))) return chatResponses.setup;
-  if (['results', 'proof', 'clients', 'roi'].some(w => m.includes(w))) return chatResponses.results;
-  return chatResponses.default;
-}
-function appendMessage(text, who) {
-  const wrap = document.createElement('div');
-  wrap.className = 'chat-msg ' + (who === 'user' ? 'user' : 'bot');
-  wrap.textContent = text;
-  document.getElementById('chatMessages').appendChild(wrap);
-  wrap.scrollIntoView({ behavior: 'smooth', block: 'end' });
-}
-function showTyping() {
-  const t = document.createElement('div');
-  t.className = 'chat-typing'; t.id = 'typingIndicator';
-  t.innerHTML = '<span></span><span></span><span></span>';
-  document.getElementById('chatMessages').appendChild(t);
-  t.scrollIntoView({ behavior: 'smooth', block: 'end' });
-}
-function removeTyping() {
-  const t = document.getElementById('typingIndicator');
-  if (t) t.remove();
-}
-
-let chatPending = false;
-async function sendChat() {
-  if (chatPending) return;
-  const input = document.getElementById('chatInput');
-  if (!input || !input.value.trim()) return;
-  const msg = input.value.trim();
-  appendMessage(msg, 'user');
-  input.value = '';
-  chatPending = true;
-  showTyping();
-  await new Promise(r => setTimeout(r, 700 + Math.random() * 600));
-  removeTyping();
-  appendMessage(getBotReply(msg), 'bot');
-  chatPending = false;
-}
-function sendQuick(text) {
-  const input = document.getElementById('chatInput');
-  if (input) { input.value = text; sendChat(); }
-}
-
-
 document.addEventListener('DOMContentLoaded', () => {
+  const chatInput = document.getElementById('chatInput');
+  const chatSendBtn = document.getElementById('chatSendBtn');
+
+  if (chatSendBtn) {
+    chatSendBtn.addEventListener('click', sendChat);
+  }
+
+  if (chatInput) {
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        sendChat();
+      }
+    });
+  }
+
+  document.querySelectorAll('.qr-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      sendQuick(btn.textContent.trim());
+    });
+  });
+
   const form = document.getElementById('contactForm');
   const formSuccess = document.getElementById('formSuccess');
   const submitBtn = document.getElementById('submitBtn');
@@ -323,32 +360,33 @@ document.addEventListener('DOMContentLoaded', () => {
       submitBtn.textContent = 'Confirming...';
     }
 
-    const payload = {
-      name,
-      business,
-      email,
-      phone,
-      industry,
-      message
-    };
-
     try {
       const formData = new FormData(form);
-      const resp = await fetch('/', {
+
+      await fetch('/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams(Array.from(formData.entries())).toString()
       });
 
       form.style.display = 'none';
-      if (formSuccess) formSuccess.style.display = 'flex';
-      showToast('Booking confirmed! 🎉', name + ' from ' + business + ' — we\'ll be in touch within 4 hours.');
 
+      if (formSuccess) {
+        formSuccess.style.display = 'flex';
+      }
+
+      showToast(
+        'Booking confirmed! 🎉',
+        `${name} from ${business} — we'll be in touch within 4 hours.`
+      );
     } catch (err) {
       console.error('Form error:', err);
       setError('formError', 'Network error. Please try again or email us directly.');
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Book My Free Audit Call →';
+
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Book My Free Audit Call →';
+      }
     }
-  })
-})
+  });
+});
