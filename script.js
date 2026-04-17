@@ -212,7 +212,7 @@ function appendMessage(text, who) {
   wrap.className = 'chat-msg ' + (who === 'user' ? 'user' : 'bot');
   wrap.textContent = text;
   messages.appendChild(wrap);
-  wrap.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  messages.scrollTop = messages.scrollHeight;
 }
 
 function showTyping() {
@@ -226,7 +226,7 @@ function showTyping() {
   t.id = 'typingIndicator';
   t.innerHTML = '<span></span><span></span><span></span>';
   messages.appendChild(t);
-  t.scrollIntoView({ behavior: 'smooth', block: 'end' });
+messages.scrollTop = messages.scrollHeight;
 }
 
 function removeTyping() {
