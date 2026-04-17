@@ -116,7 +116,7 @@ function calcROI() {
 
   document.getElementById('leadsVal').textContent = leads;
   document.getElementById('dealVal').textContent = '$' + deal.toLocaleString();
-  document.getElementById('closeVal').textContent = `${close * 100}%`;
+  document.getElementById('closeVal').textContent = `${Math.round(close * 100)}%`;
   document.getElementById('adminVal').textContent = `${admin} hrs`;
   document.getElementById('hourlyVal').textContent = `$${hourly}/hr`;
 
@@ -144,43 +144,7 @@ function calcROI() {
 
 calcROI();
 
-/* ==========================================================================
-   Pricing toggle
-   ========================================================================== */
-const prices = { starter: 147, growth: 397, scale: 797 };
-const setups = { starter: 297, growth: 797, scale: 1497 };
-const annualToggle = document.getElementById('annualToggle');
 
-if (annualToggle) {
-  annualToggle.addEventListener('change', function () {
-    const annual = this.checked;
-
-    document.getElementById('monthlyLabel')?.classList.toggle('active', !annual);
-    document.getElementById('annualLabel')?.classList.toggle('active', annual);
-
-    ['starter', 'growth', 'scale'].forEach((plan) => {
-      const monthly = prices[plan];
-      const discounted = Math.round(monthly * 0.8);
-
-      const priceEl = document.getElementById(`${plan}Price`);
-      const origEl = document.getElementById(`${plan}Orig`);
-      const setupEl = document.getElementById(`${plan}Setup`);
-
-      if (!priceEl || !origEl || !setupEl) return;
-
-      if (annual) {
-        priceEl.textContent = `$${discounted}`;
-        origEl.textContent = `$${monthly}`;
-        origEl.style.display = 'inline';
-        setupEl.textContent = 'Setup fee waived with annual plan';
-      } else {
-        priceEl.textContent = `$${monthly}`;
-        origEl.style.display = 'none';
-        setupEl.textContent = `+ $${setups[plan].toLocaleString()} one-time setup`;
-      }
-    });
-  });
-}
 
 /* ==========================================================================
    Chatbot helpers
