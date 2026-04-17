@@ -279,44 +279,22 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     try {
-      const resp = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await resp.json();
-
-      if (!resp.ok) {
-        if (data?.error === 'duplicate_email') {
-          setError('emailErr', 'This email has already been used to request a call.');
-        } else if (data?.error === 'missing_fields') {
-          setError('formError', 'Please fill in all required fields.');
-        } else {
-          setError('formError', 'Something went wrong. Please try again.');
-        }
-
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Book My Free Audit Call →';
-        }
-
-        return;
-      }
-
-      form.style.display = 'none';
-
-      if (formSuccess) {
-        formSuccess.style.display = 'flex';
-      }
-    } catch (err) {
-      console.error('Contact form error:', err);
-      setError('formError', 'Network error. Please try again later.');
-
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Book My Free Audit Call →';
-      }
-    }
+  const formData = new FormData(form);
+  const resp = await fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams(Array.from(formData.entries())).toString()
   });
-});
+
+  form.style.display = 'none';
+  if (formSuccess) formSuccess.style.display = 'flex';
+  showToast('Booking confirmed! 🎉', name + ' from ' + business + ' — we\'ll be in touch within 4 hours.');
+
+} catch (err) {
+  console.error('Form error:', err);
+  setError('formError', 'Network error. Please try again or email us directly.');
+  submitBtn.disabled    = false;
+  submitBtn.textContent = 'Book My Free Audit Call →';
+}
+  })
+})
