@@ -221,6 +221,26 @@ function validateEmail(email) {
    The backend checks for duplicate emails and returns JSON.
    On success, the form is hidden and the success message is shown.
    ========================================================================== */
+   let chatPending = false;
+async function sendChat() {
+  if (chatPending) return;
+  const input = document.getElementById('chatInput');
+  if (!input || !input.value.trim()) return;
+  const msg = input.value.trim();
+  appendMessage(msg, 'user');
+  input.value = '';
+  chatPending = true;
+  showTyping();
+  await new Promise(r => setTimeout(r, 700 + Math.random() * 600));
+  removeTyping();
+  appendMessage(getBotReply(msg), 'bot');
+  chatPending = false;
+}
+function sendQuick(text) {
+  const input = document.getElementById('chatInput');
+  if (input) { input.value = text; sendChat(); }
+}
+
 
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('contactForm');
