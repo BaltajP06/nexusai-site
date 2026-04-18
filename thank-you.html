@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>You're In — NexusAI</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080c10;--surface:#0d1117;--surface2:#111720;--border:#1e2d3d;--divider:#162030;--text:#e2e8f0;--muted:#8892a4;--faint:#4a5568;--cyan:#06b6d4;--cyan-hover:#22d3ee;--cyan-glow:rgba(6,182,212,0.15);--cyan-dim:rgba(6,182,212,0.08);--indigo:#6366f1;--green:#10b981;--amber:#f59e0b;--r-sm:.375rem;--r-md:.5rem;--r-lg:.75rem;--r-xl:1rem;--r-2xl:1.5rem;--r-full:9999px;--ease:180ms cubic-bezier(.16,1,.3,1);--ease-slow:400ms cubic-bezier(.16,1,.3,1);--shadow:0 4px 24px rgba(0,0,0,.6);--glow:0 0 40px rgba(6,182,212,.2)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',system-ui,sans-serif;font-size:1rem;color:var(--text);background:var(--bg);line-height:1.65;min-height:100dvh;overflow-x:hidden}
+img,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+#particles{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5}
+.page{position:relative;z-index:1;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1.5rem}
+.burst-wrap{position:relative;margin-bottom:2rem}
+.burst-ring{position:absolute;inset:-20px;border-radius:50%;border:1px solid rgba(6,182,212,.2);animation:ring-pulse 2.5s ease-out forwards}
+.burst-ring:nth-child(2){inset:-40px;animation-delay:.15s;border-color:rgba(6,182,212,.12)}
+.burst-ring:nth-child(3){inset:-65px;animation-delay:.3s;border-color:rgba(6,182,212,.07)}
+@keyframes ring-pulse{0%{transform:scale(.6);opacity:0}40%{opacity:1}100%{transform:scale(1);opacity:0}}
+.burst-icon{width:80px;height:80px;background:linear-gradient(135deg,var(--cyan),var(--indigo));border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 60px rgba(6,182,212,.35);animation:icon-in .6s cubic-bezier(.16,1,.3,1) forwards;opacity:0;transform:scale(.5)}
+@keyframes icon-in{to{opacity:1;transform:scale(1)}}
+.burst-icon svg{width:36px;height:36px}
+.heading-wrap{text-align:center;margin-bottom:2.5rem;animation:fade-up .7s .2s cubic-bezier(.16,1,.3,1) both}
+@keyframes fade-up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.eyebrow{font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);margin-bottom:.75rem}
+.heading-wrap h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.1;margin-bottom:.85rem}
+.heading-wrap p{color:var(--muted);font-size:1.05rem;max-width:480px;margin:0 auto}
+.steps-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r-2xl);padding:2rem;max-width:560px;width:100%;margin-bottom:1.5rem;animation:fade-up .7s .35s cubic-bezier(.16,1,.3,1) both}
+.steps-title{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1.25rem}
+.step-row{display:flex;gap:1rem;align-items:flex-start;padding:.75rem 0;border-bottom:.5px solid var(--divider)}
+.step-row:last-child{border-bottom:none;padding-bottom:0}
+.step-num{width:28px;height:28px;background:var(--cyan-dim);border:.5px solid rgba(6,182,212,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:.75rem;font-weight:800;color:var(--cyan);flex-shrink:0;margin-top:.1rem}
+.step-text strong{display:block;font-size:.9rem;font-weight:600;color:var(--text);margin-bottom:.2rem}
+.step-text span{font-size:.82rem;color:var(--muted);line-height:1.55}
+.cta-block{max-width:560px;width:100%;animation:fade-up .7s .5s cubic-bezier(.16,1,.3,1) both}
+.cta-label{font-size:.78rem;color:var(--muted);text-align:center;margin-bottom:.85rem}
+.cta-label strong{color:var(--cyan)}
+.btn-cta{display:flex;align-items:center;justify-content:center;gap:.6rem;width:100%;padding:.9rem 2rem;background:var(--cyan);color:#000;font-weight:700;font-size:1rem;border-radius:var(--r-full);border:none;cursor:pointer;transition:var(--ease);margin-bottom:.75rem;text-decoration:none}
+.btn-cta:hover{background:var(--cyan-hover);transform:translateY(-2px);box-shadow:var(--glow)}
+.btn-cta svg{width:18px;height:18px;flex-shrink:0}
+.btn-secondary{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;padding:.75rem 2rem;background:transparent;color:var(--muted);font-weight:500;font-size:.9rem;border-radius:var(--r-full);border:.5px solid var(--border);cursor:pointer;transition:var(--ease);text-decoration:none}
+.btn-secondary:hover{border-color:var(--cyan);color:var(--cyan)}
+.pdf-banner{display:flex;align-items:center;gap:1rem;background:linear-gradient(135deg,rgba(6,182,212,.07),rgba(99,102,241,.05));border:.5px solid rgba(6,182,212,.25);border-radius:var(--r-xl);padding:1rem 1.25rem;max-width:560px;width:100%;margin-top:1.25rem;animation:fade-up .7s .65s cubic-bezier(.16,1,.3,1) both;cursor:pointer;transition:var(--ease)}
+.pdf-banner:hover{border-color:rgba(6,182,212,.5);background:rgba(6,182,212,.06)}
+.pdf-icon{width:40px;height:40px;background:var(--cyan-dim);border:.5px solid rgba(6,182,212,.3);border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pdf-text strong{display:block;font-size:.875rem;font-weight:600;color:var(--text)}
+.pdf-text span{font-size:.78rem;color:var(--muted)}
+.pdf-arrow{margin-left:auto;color:var(--cyan);flex-shrink:0}
+.ty-footer{margin-top:2.5rem;text-align:center;animation:fade-up .7s .8s cubic-bezier(.16,1,.3,1) both}
+.ty-footer .logo{display:inline-flex;align-items:center;gap:.5rem;margin-bottom:.5rem}
+.ty-footer .logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem}
+.ty-footer p{font-size:.78rem;color:var(--faint)}
+.confetti-piece{position:fixed;width:8px;height:8px;top:-10px;border-radius:2px;animation:confetti-fall linear forwards;pointer-events:none;z-index:999}
+@keyframes confetti-fall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+@media(max-width:540px){.steps-card,.cta-block,.pdf-banner{padding:1.5rem}.step-row{gap:.75rem}}
+</style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+<main class="page">
+  <div class="burst-wrap">
+    <div class="burst-ring"></div><div class="burst-ring"></div><div class="burst-ring"></div>
+    <div class="burst-icon">
+      <svg viewBox="0 0 36 36" fill="none"><path d="M7 18l8 8L29 10" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+  </div>
+  <div class="heading-wrap">
+    <p class="eyebrow">Payment confirmed</p>
+    <h1>You're officially in. 🎉</h1>
+    <p>Welcome to NexusAI. Here's exactly what happens next so you know what to expect.</p>
+  </div>
+  <div class="steps-card">
+    <p class="steps-title">What happens next</p>
+    <div class="step-row"><div class="step-num">1</div><div class="step-text"><strong>Check your email (right now)</strong><span>Your receipt + a personal welcome from us is on its way. Usually arrives within 2 minutes. Check spam if you don't see it.</span></div></div>
+    <div class="step-row"><div class="step-num">2</div><div class="step-text"><strong>We reach out within 4 hours</strong><span>A real person from our team will text or email you to confirm your onboarding call time. No bots, no delays.</span></div></div>
+    <div class="step-row"><div class="step-num">3</div><div class="step-text"><strong>30-min onboarding call</strong><span>We map your business, lock in the automation strategy, and gather what we need. You'll leave with a clear timeline.</span></div></div>
+    <div class="step-row"><div class="step-num">4</div><div class="step-text"><strong>Live in 3–5 business days</strong><span>We build, test, and launch your automation. You get a walkthrough and it's running — no tech knowledge needed.</span></div></div>
+  </div>
+  <div class="cta-block">
+    <p class="cta-label">Can't wait? <strong>Book your onboarding call right now</strong></p>
+    <a href="https://calendly.com/pbaltaj/30min" target="_blank" class="btn-cta">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Book My Onboarding Call
+    </a>
+    <a href="/" class="btn-secondary">← Back to NexusAI</a>
+  </div>
+  <div class="pdf-banner" onclick="downloadWelcomePDF()">
+    <div class="pdf-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+    <div class="pdf-text"><strong>Download your Welcome Kit</strong><span>What to prepare, what to expect, and how to get the most from NexusAI</span></div>
+    <div class="pdf-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+  </div>
+  <div class="ty-footer">
+    <div class="logo"><svg width="24" height="24" viewBox="0 0 32 32" fill="none"><polygon points="16,2 30,10 30,22 16,30 2,22 2,10" stroke="#06b6d4" stroke-width="1.5" fill="none"/><circle cx="16" cy="16" r="3" fill="#06b6d4"/></svg><span class="logo-text">NexusAI</span></div>
+    <p>Questions? Reply to your confirmation email or text us directly.</p>
+  </div>
+</main>
+<script>
+(function(){const c=document.getElementById('particles'),ctx=c.getContext('2d');let W,H,dots=[];function resize(){W=c.width=innerWidth;H=c.height=innerHeight;}resize();window.addEventListener('resize',resize);for(let i=0;i<60;i++)dots.push({x:Math.random()*2000,y:Math.random()*1200,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.5+.5,a:Math.random()*.4+.1});function draw(){ctx.clearRect(0,0,W,H);dots.forEach(d=>{d.x+=d.vx;d.y+=d.vy;if(d.x<0||d.x>W)d.vx*=-1;if(d.y<0||d.y>H)d.vy*=-1;ctx.beginPath();ctx.arc(d.x,d.y,d.r,0,Math.PI*2);ctx.fillStyle=`rgba(6,182,212,${d.a})`;ctx.fill();});requestAnimationFrame(draw);}draw();})();
+(function(){const colors=['#06b6d4','#6366f1','#10b981','#f59e0b','#fff','#22d3ee'];for(let i=0;i<90;i++){const el=document.createElement('div');el.className='confetti-piece';el.style.left=Math.random()*100+'vw';el.style.background=colors[Math.floor(Math.random()*colors.length)];el.style.width=(Math.random()*8+4)+'px';el.style.height=(Math.random()*8+4)+'px';el.style.borderRadius=Math.random()>.5?'50%':'2px';el.style.animationDuration=(Math.random()*2+1.5)+'s';el.style.animationDelay=(Math.random()*.8)+'s';document.body.appendChild(el);el.addEventListener('animationend',()=>el.remove());}})();
+function downloadWelcomePDF(){const win=window.open('','_blank');win.document.write(`<!DOCTYPE html><html><head><title>NexusAI Welcome Kit</title><style>body{font-family:system-ui,sans-serif;max-width:700px;margin:0 auto;padding:3rem 2rem;color:#111;line-height:1.65}h1{font-size:2rem;margin-bottom:.25rem}.sub{color:#666;margin-bottom:2.5rem}h2{font-size:1.1rem;font-weight:700;margin:2rem 0 .5rem;border-left:3px solid #06b6d4;padding-left:.75rem}p,li{font-size:.95rem;color:#444;margin-bottom:.5rem}ul{padding-left:1.25rem}.footer{margin-top:3rem;padding-top:1.5rem;border-top:1px solid #eee;font-size:.8rem;color:#999;text-align:center}</style></head><body><h1>Welcome to NexusAI</h1><p class="sub">You made a great decision. Here is everything you need to know.</p><h2>What We Will Build For You</h2><p>Our team will set up your automation(s), test thoroughly, and hand it over working within 3-5 business days of your onboarding call.</p><h2>What We Need From You</h2><ul><li>Your business website URL</li><li>Your preferred booking tool (Calendly, GHL, etc.)</li><li>Access to your CRM or inbox (requested on the call)</li><li>3-5 common questions your customers ask</li><li>Your business hours and contact preferences</li></ul><h2>What Happens On Your Onboarding Call</h2><ul><li>We map your exact workflow and where leads drop off</li><li>We lock in the automation strategy</li><li>You leave with a clear build timeline</li><li>30 minutes, tight and focused</li></ul><h2>Monthly Retainer Includes</h2><ul><li>Ongoing monitoring of your automations</li><li>Maintenance as AI tools evolve</li><li>Bug fixes before you notice them</li><li>Support via email or Slack per your plan</li><li>Monthly performance reports</li></ul><h2>Contact</h2><p>Response time: within 4 hours Mon-Fri 9am-6pm PST</p><p>30-day money-back guarantee. No results in 30 days = full refund.</p><div class="footer">NexusAI Agency - Vancouver BC - 2026</div></body></html>`);win.document.close();setTimeout(()=>win.print(),500);}
+</script>
+</body>
+</html>
