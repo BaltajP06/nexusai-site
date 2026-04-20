@@ -2,7 +2,7 @@
 
 AI-powered lead generation website for local businesses. Captures leads, answers questions automatically via chatbot, and books audit calls — 24/7.
 
-**Live site:** [your-site.netlify.app](https://your-site.netlify.app)
+**Live site:** https://nexus-ai-bp.netlify.app/
 
 ---
 
